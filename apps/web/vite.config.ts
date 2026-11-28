@@ -27,7 +27,10 @@ export default defineConfig({
 				runes: ({ filename }) =>
 					filename.split(/[/\\]/).includes('node_modules') ? undefined : true
 			},
-			adapter: adapter({ platformProxy: { remoteBindings } })
+			adapter: adapter({ platformProxy: { remoteBindings } }),
+			// Offline, every page is answered with the cached start page. Relative asset paths in it
+			// ("./_app/…") would resolve under the deeper address and leave a blank screen.
+			paths: { relative: false }
 		})
 	],
 	test: {

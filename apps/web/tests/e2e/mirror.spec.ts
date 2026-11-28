@@ -104,3 +104,34 @@ test('after a first visit, the app reopens offline with the covers it has seen (
 	await expect(reopened.getByRole('banner').getByText('Offline')).toBeVisible();
 	await context.setOffline(false);
 });
+
+// The app starts with no connection, and on a signal so weak nothing answers, at any address: a
+// relative asset path once left deeper pages blank, and unanswered requests once held every page.
+test('the app starts offline and on a weak signal, at any page', async ({ page, context }) => {
+	test.setTimeout(120_000);
+	await page.goto('/library?tab=all');
+	await page.evaluate(() => navigator.serviceWorker.ready);
+	await page.reload();
+	await expect.poll(() => page.evaluate(() => !!navigator.serviceWorker.controller)).toBe(true);
+	const book = (await page
+		.getByRole('link', { name: 'Dracula', exact: true })
+		.first()
+		.getAttribute('href'))!;
+	await page.goto(book);
+	await expect(page.getByRole('heading', { name: 'Dracula' })).toBeVisible();
+	await page.close();
+
+	const opens = async (path: string) => {
+		const p = await context.newPage();
+		await p.goto(path, { waitUntil: 'commit' });
+		await expect(p.getByRole('navigation', { name: 'Main' })).toBeVisible({ timeout: 15_000 });
+		await p.close();
+	};
+	await context.setOffline(true);
+	for (const path of ['/', '/library?tab=all', book]) await opens(path);
+	await context.setOffline(false);
+
+	// Every request hangs, the service worker's too (PW_EXPERIMENTAL_SERVICE_WORKER_NETWORK_EVENTS).
+	await context.route('**/*', () => {});
+	for (const path of ['/', book]) await opens(path);
+});

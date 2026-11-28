@@ -179,7 +179,11 @@ export const fileShaOf = (url: string | null | undefined) =>
  */
 export async function fetchPlaces(f: typeof fetch = fetch): Promise<Place[] | null> {
 	try {
-		const res = await f('/api/progress', { redirect: 'manual' });
+		// Longer than the service worker's patience, so a saved copy wins when there is one.
+		const res = await f('/api/progress', {
+			redirect: 'manual',
+			signal: AbortSignal.timeout(4000)
+		});
 		if (!res.ok) return null;
 		const parsed = ProgressGetSchema.safeParse(await res.json());
 		return parsed.success ? parsed.data.places : null;

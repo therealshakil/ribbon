@@ -788,3 +788,13 @@
 - **Tests:** 15 unit tests for downloads (partial body, size mismatch, quota, offline, update keeps the old copy until the new one is stored); the FR-016 smoke test passes in the full e2e run (53 passed).
 - **Known limit (spec 003 behaviour):** offline, a full page load of a deep address gets the cached start page; moving around inside the app works. The installed app always starts at Home, so reading offline works as intended.
 - **Found by the checks:** the token-only rule (no raw radius, no transitions) and the catalogue rule (every component has a design page): added `design/download-button` and `design/offline-note`.
+
+## 2026-11-28: Spec 004 approved; the app starts offline
+
+- **T028:** the owner approved spec 004 on their devices. Left: deploy (T030).
+- **Owner's report:** offline, the app was blocked entirely on startup. Two causes, both on a mirror build:
+  - The cached start page used relative asset paths (`./_app/…`). Served for a deeper address offline, such as a book page or the reader, they resolved under it and the screen stayed blank. Fixed with `paths.relative: false`. This also removes the 2026-11-25 known limit: a full load of any address now works offline.
+  - On a weak signal, requests don't fail, they just never answer, and the service worker and layout waited on them with no limit. Now the network gets 2 seconds before the saved copy answers, and a slow answer still finishes and is kept for next time. The AI check is skipped offline and limited to 3 seconds; reading places to 4. Layout data loads side by side.
+- **Measured:** with every request hanging, Home, Library and a book page open in under 7 seconds (before: never).
+- **Test:** `pnpm test:e2e:mirror` gains "the app starts offline and on a weak signal, at any page".
+- **Still open:** the owner finds offline navigation and viewing saved content poor in general. Specifics to gather before any design.

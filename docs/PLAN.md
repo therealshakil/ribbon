@@ -10,7 +10,7 @@ exists, its `tasks.md` is the source of truth and the list here is not updated.
 | 001 | [Visual design](../specs/001-visual-design/spec.md): calm, ND-friendly design system + per-element design pages | calm-ds constitution | MVP built (US1+US2); US4 superseded by 002 |
 | 002 | [Redesigned screens and AI features](../specs/002-redesign-and-ai/spec.md) (DR-0002, DR-0003) | 001 | Built and design signed off 2026-11-23 on sample data. Not deployed. Story so far (T053) and AI search (T061–T063) are parked; plain search shipped instead (DR-0008) |
 | 003 | [Library mirror](../specs/003-library-mirror/spec.md) (Phase 1 below) | 002 | Done 2026-11-25. Deployed 2026-11-24; the owner's 670 books are online at library.longshelf.app |
-| 004 | [Reading offline and across devices](../specs/004-reading/spec.md) (Phase 2) | 003 | Built 2026-11-27, in review (PR #2). FR-009 revised 2026-11-27: the most recently read place wins, places further on are offered once. Left: the owner's device check (T028), deploy (T030) |
+| 004 | [Reading offline and across devices](../specs/004-reading/spec.md) (Phase 2) | 003 | Merged 2026-11-27, approved by the owner 2026-11-28. FR-009 revised 2026-11-27: the most recently read place wins, places further on are offered once. Left: deploy (T030) |
 | 005 | Device progress (Phase 3) | 004, spike | not started |
 
 ## Spike (manual, on the desktop with the Kobo; record findings here)

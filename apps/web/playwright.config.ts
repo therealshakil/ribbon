@@ -19,6 +19,8 @@ const port = Number(process.env.E2E_PORT);
 // `pnpm test:e2e:mirror` (spec 003 T029, on demand): a mirror build seeded by the longshelf CLI
 // with the test library. Everyday `pnpm test:e2e` uses the sample build.
 const mirror = process.env.E2E_MIRROR === '1';
+// Lets a test hold the service worker's requests too, to stand in for a weak signal.
+if (mirror) process.env.PW_EXPERIMENTAL_SERVICE_WORKER_NETWORK_EVENTS ??= '1';
 
 export default defineConfig({
 	testDir: 'tests/e2e',

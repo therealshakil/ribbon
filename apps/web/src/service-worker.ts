@@ -56,6 +56,24 @@ self.addEventListener('activate', (event) => {
 	);
 });
 
+/**
+ * How long the network gets before a cached copy answers instead. A weak signal often doesn't
+ * fail, it just never answers; without a limit the app would wait on it indefinitely.
+ */
+const PATIENCE_MS = 2000;
+
+/**
+ * A request and its first answer: the response, null when it failed, or 'slow' when nothing came
+ * within PATIENCE_MS. A slow request carries on; `live` is its eventual answer.
+ */
+function network(request: Request, init?: RequestInit) {
+	const live = fetch(request, init).catch(() => null);
+	const slow = new Promise<'slow'>((done) => setTimeout(() => done('slow'), PATIENCE_MS));
+	return { live, first: Promise.race([live, slow]) };
+}
+
+type KeepAlive = (work: Promise<unknown>) => void;
+
 /** True when Cloudflare Access answered with its sign-in redirect instead of the data. */
 const signInRedirect = (res: Response) =>
 	res.type === 'opaqueredirect' || (res.status >= 300 && res.status < 400);
@@ -69,21 +87,33 @@ async function coverFirst(request: Request) {
 	return res;
 }
 
-/** The catalogue or the reading places: the network, else the last copy marked with why. */
-async function lastCopy(request: Request, path: string) {
+/**
+ * The catalogue or the reading places: the network, else the last copy marked with why. A slow
+ * network gets the last copy at once, and a fresh copy is kept for next time when it arrives.
+ */
+async function lastCopy(request: Request, path: string, keepAlive: KeepAlive) {
 	const cache = await caches.open(CATALOG);
-	// null when offline
-	const res = await fetch(request, { redirect: 'manual' }).catch(() => null);
-	if (res?.ok) {
-		await cache.put(path, res.clone());
-		return res;
+	const { live, first } = network(request, { redirect: 'manual' });
+	keepAlive(
+		live.then(async (res) => {
+			if (res?.ok) await cache.put(path, res.clone());
+		})
+	);
+	let res = await first;
+	if (res === 'slow') {
+		const cached = await cache.match(path);
+		if (cached) return marked(cached, 'offline');
+		res = await live;
 	}
-	if (res && res.status === 304) return res;
+	if (res?.ok || res?.status === 304) return res;
 	const reason = res && signInRedirect(res) ? 'sign-in' : res ? null : 'offline';
 	const cached = reason ? await cache.match(path) : undefined;
-	if (!cached) return res ?? Response.error();
+	return cached ? marked(cached, reason!) : (res ?? Response.error());
+}
+
+function marked(cached: Response, reason: string) {
 	const headers = new Headers(cached.headers);
-	headers.set(SOURCE_HEADER, reason!);
+	headers.set(SOURCE_HEADER, reason);
 	return new Response(cached.body, { status: 200, headers });
 }
 
@@ -103,16 +133,19 @@ async function bookFile(request: Request) {
 	return new Response(hit.body, { status: 200, headers });
 }
 
-async function page(request: Request) {
-	try {
-		const res = await fetch(request);
-		if (res.ok && new URL(request.url).pathname === '/')
-			await (await caches.open(SHELL)).put('/', res.clone());
-		return res;
-	} catch {
-		const shell = await (await caches.open(SHELL)).match('/');
-		return shell ?? Response.error();
-	}
+/** Pages: the network, else the cached start page (the app routes from there), also when slow. */
+async function page(request: Request, keepAlive: KeepAlive) {
+	const shell = await caches.open(SHELL);
+	const { live, first } = network(request);
+	if (new URL(request.url).pathname === '/')
+		keepAlive(
+			live.then(async (res) => {
+				if (res?.ok) await shell.put('/', res.clone());
+			})
+		);
+	const res = await first;
+	if (res && res !== 'slow') return res;
+	return (await shell.match('/')) ?? (await live) ?? Response.error();
 }
 
 async function shellFirst(request: Request) {
@@ -126,13 +159,14 @@ self.addEventListener('fetch', (event) => {
 	const url = new URL(request.url);
 	if (url.origin !== self.location.origin) return;
 	const path = url.pathname;
+	const keep: KeepAlive = (work) => event.waitUntil(work);
 
 	if (path.startsWith('/api/covers/')) event.respondWith(coverFirst(request));
 	else if (path === '/api/catalog' || path === '/api/progress')
-		event.respondWith(lastCopy(request, path));
+		event.respondWith(lastCopy(request, path, keep));
 	else if (path.startsWith('/api/files/') || path.startsWith('/sample/books/'))
 		event.respondWith(bookFile(request));
-	else if (request.mode === 'navigate') event.respondWith(page(request));
+	else if (request.mode === 'navigate') event.respondWith(page(request, keep));
 	else if (SHELL_FILES.includes(path)) event.respondWith(shellFirst(request));
 	// Everything else (AI, uploads, other sample data) goes straight to the network.
 });
