@@ -76,7 +76,7 @@ Evergreen browsers. The CLI on Linux and macOS.
 | IV. What, not how | Pass | The spec names no tools. They're named here, in research.md and in DR-0013. |
 | V. Adopt before building | Pass | Cron Triggers and D1 rather than our own scheduler. Queues, Workflows and an adapter fork were assessed (R1). The DR-0005 source route is reused. |
 | VI. Decisions recorded | Pass | DR-0013 (proposed) for the runner and the change to DR-0005. The owner locks it. |
-| VII. Challenger before locking | Pending | DR-0013 carries a challenger section. The owner rules when reviewing this plan. |
+| VII. Challenger before locking | Pass | DR-0013's challenger argued for first-published years only; the owner rejected that case on 2026-11-28. |
 | VIII. Cite or mark assumption | Pass | Limits are cited with the read date; four ASSUMPTIONs are named (document size, request count, refresh periods, living-author coverage), each with a check. |
 | IX. Economy | Pass | $0 a month expected. A second Worker is free on the Free plan. No new dependencies. |
 | X. Solo-operable | Pass | `pnpm run deploy` deploys both Workers. No manual step beyond today's. |

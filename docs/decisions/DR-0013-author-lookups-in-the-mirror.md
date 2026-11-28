@@ -1,6 +1,6 @@
 # DR-0013: Author lookups run in the mirror, matched through Open Library
 
-Status: **rejected** (owner, 2026-11-28). Drafted the same day with the spec 006 plan.
+Status: **proposed** (drafted 2026-11-28 with the spec 006 plan; the owner locks it).
 Refines: [DR-0005](DR-0005-author-data.md). Spec: [006](../../specs/006-open-library/spec.md).
 
 ## Context
@@ -33,7 +33,8 @@ Strongest case against: "Longshelf's first principle is few moving parts. A seco
 sources and a queue is a lot for author bios. Ship first-published years only, from the laptop,
 and leave the author page as it is."
 
-Ruling: rejected by the owner, 2026-11-28. The proposer's answer had been: the moving parts are contained.
+Ruling (owner, 2026-11-28): the challenger's case is rejected; first-published years alone are not enough.
+The proposer's answer: the moving parts are contained.
 Each source only hides its own section when it fails, the queue is one table,
 and the off switch removes everything the feature added.
 
