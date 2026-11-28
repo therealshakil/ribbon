@@ -1,0 +1,261 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Offline mode · Longshelf (design mock)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Literata:opsz,wght@7..72,400..700&family=Atkinson+Hyperlegible+Next:wght@400;500;600;700&display=swap" rel="stylesheet">
+<script>if(location.hash==='#dark'||location.hash==='#light')document.documentElement.dataset.theme=location.hash.slice(1)</script>
+<style>
+/* Review sheet for the offline design pass (2026-11-28). Tokens copied from apps/web/src/lib/styles/tokens.css. Not app code. */
+:root{--bg:oklch(0.976 0.003 106);--surface:oklch(0.940 0.004 91);--ink:oklch(0.214 0.002 68);--text:oklch(0.314 0.008 85);--muted:oklch(0.491 0.011 78);--border:oklch(0.894 0.008 91);--control:oklch(0.600 0.011 82);--accent:oklch(0.413 0.106 13);--accent-surface:oklch(0.934 0.012 17);--btn:oklch(0.214 0.002 68);--on-btn:oklch(0.976 0.003 106);--shadow-cover:0 1px 2px #0002,0 18px 30px -14px #0007;--shadow-tile:0 1px 1px #0001,0 8px 14px -10px #0006;--dim:.38}
+@media (prefers-color-scheme:dark){:root:not([data-theme=light]){--bg:oklch(0.227 0.004 85);--surface:oklch(0.281 0.006 92);--ink:oklch(0.938 0.010 82);--text:oklch(0.874 0.013 82);--muted:oklch(0.708 0.016 81);--border:oklch(0.330 0.011 85);--control:oklch(0.564 0.015 82);--accent:oklch(0.759 0.087 11);--accent-surface:oklch(0.294 0.031 9);--btn:oklch(0.938 0.010 82);--on-btn:oklch(0.227 0.004 85);--shadow-cover:0 1px 2px #0006,0 18px 30px -14px #000c;--shadow-tile:0 1px 1px #0004,0 8px 14px -10px #000a;--dim:.32}}
+:root[data-theme=dark]{--bg:oklch(0.227 0.004 85);--surface:oklch(0.281 0.006 92);--ink:oklch(0.938 0.010 82);--text:oklch(0.874 0.013 82);--muted:oklch(0.708 0.016 81);--border:oklch(0.330 0.011 85);--control:oklch(0.564 0.015 82);--accent:oklch(0.759 0.087 11);--accent-surface:oklch(0.294 0.031 9);--btn:oklch(0.938 0.010 82);--on-btn:oklch(0.227 0.004 85);--shadow-cover:0 1px 2px #0006,0 18px 30px -14px #000c;--shadow-tile:0 1px 1px #0004,0 8px 14px -10px #000a;--dim:.32}
+*{box-sizing:border-box;margin:0;padding:0}
+html{background:var(--bg);color:var(--text);font:400 1rem/1.5 'Atkinson Hyperlegible Next',system-ui,sans-serif;-webkit-text-size-adjust:100%}
+::selection{background:var(--accent-surface);color:var(--ink)}
+a{color:inherit}
+:focus-visible{outline:3px solid var(--accent);outline-offset:2px;border-radius:.25rem}
+svg.i{width:1.25rem;height:1.25rem;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;flex:none}
+ol,ul{list-style:none}
+.wrap{max-width:80rem;margin:0 auto;padding:0 clamp(1rem,4vw,3.5rem)}
+
+/* Review chrome (dashed): not product UI */
+.sheet-top{display:flex;flex-wrap:wrap;justify-content:space-between;gap:.5rem 2rem;align-items:baseline;padding:2rem 0 .5rem}
+.sheet-top h1{font:600 clamp(1.75rem,3vw,2.25rem)/1.15 Literata,serif;color:var(--ink)}
+.sheet-top p,.why{color:var(--muted);font-size:.9375rem;max-width:44rem}
+.themes{font-size:.875rem;color:var(--muted)}.themes a{margin-left:.5rem}
+.part{padding:3rem 0 1rem;border-top:1px dashed var(--control);margin-top:3rem}
+.part>h2{font:600 1.375rem/1.2 Literata,serif;color:var(--ink);margin-bottom:.35rem}
+.why{margin-bottom:1.5rem}
+.why b{color:var(--ink);font-weight:650}
+.frame{border:1px dashed var(--control);border-radius:.75rem;padding:clamp(1rem,3vw,2rem)}
+.lab{display:block;font-size:.8125rem;color:var(--muted);margin-bottom:.75rem}
+
+/* App header */
+.hd{display:flex;flex-wrap:wrap;align-items:center;gap:1rem 2rem;padding:0 0 1.5rem}
+.wm{display:flex;align-items:center;gap:.6rem;text-decoration:none;font:600 1.6rem/1 Literata,serif;color:var(--ink)}
+.wm svg{width:1.6rem;height:1.6rem}.wm .sh{fill:var(--ink)}.wm .bk{fill:var(--accent)}
+.nav{display:flex;gap:1.5rem;font-weight:650}.nav a{text-decoration:none;color:var(--muted);padding-bottom:.35rem}
+.nav a[aria-current]{color:var(--ink);box-shadow:inset 0 -2px var(--accent)}
+.srch{flex:1 1 16rem;max-width:34rem;margin-left:auto;display:flex;align-items:center;gap:.6rem;padding:.6rem 1rem;border:1px solid var(--control);border-radius:999rem;color:var(--muted);background:transparent}
+.sync{display:flex;align-items:center;gap:.4rem;font-size:.875rem;color:var(--muted)}.sync svg{width:1rem;height:1rem}
+
+/* Book page */
+.bk-top{display:grid;grid-template-columns:minmax(0,16rem) minmax(0,40rem);gap:2rem 3rem;align-items:start}
+.bk-top .cv{box-shadow:var(--shadow-cover)}
+.crumb{font-size:.875rem;color:var(--muted);margin-bottom:.75rem}
+.bk-t{font:600 clamp(2.25rem,5vw,3.5rem)/1.05 Literata,serif;color:var(--ink)}
+.bk-by{font:400 1.375rem/1.3 Literata,serif;color:var(--muted);margin-top:.35rem}.bk-by a{color:var(--ink);text-underline-offset:.2em;text-decoration-thickness:1px}
+.bk-meta{font-size:.875rem;color:var(--muted);margin:.5rem 0 1.25rem;padding-bottom:1.25rem;border-bottom:1px solid var(--border)}
+.tbl{display:grid;grid-template-columns:5.5rem 1fr;gap:.9rem 1.5rem;font-size:.875rem;align-items:baseline}
+.tbl dt{color:var(--muted)}.tbl dd{color:var(--ink)}
+.pct{font-weight:650;color:var(--accent);font-variant-numeric:tabular-nums;font-size:1.125rem;margin-right:.4rem}
+.bar{height:3px;background:var(--border);margin-top:.5rem;max-width:20rem}.bar i{display:block;height:100%;background:var(--accent)}
+.acts{display:flex;align-items:center;gap:.5rem;margin-top:1.75rem;flex-wrap:wrap}
+.go{display:inline-flex;align-items:center;gap:.6rem;min-height:2.75rem;padding:0 1.4rem;border-radius:999rem;background:var(--btn);color:var(--on-btn);font-weight:650;text-decoration:none;margin-right:.5rem}
+.go svg{width:1rem;height:1rem}
+.ib{all:unset;box-sizing:border-box;position:relative;display:grid;place-items:center;width:2.75rem;height:2.75rem;border-radius:50%;color:var(--text);cursor:pointer}
+.ib:hover{background:var(--surface)}
+.ib:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
+.ib svg.i{width:1.5rem;height:1.5rem}
+.ib[aria-disabled=true]{color:var(--control);cursor:default}.ib[aria-disabled=true]:hover{background:none}
+.ib .done{width:1.5rem;height:1.5rem;border-radius:50%;background:var(--ink);color:var(--bg);display:grid;place-items:center}
+.ib .done svg{width:.95rem;height:.95rem;stroke-width:3}
+.ib .newer{position:absolute;top:.45rem;right:.45rem;width:.55rem;height:.55rem;border-radius:50%;background:var(--accent);box-shadow:0 0 0 2px var(--bg)}
+.ring{width:1.6rem;height:1.6rem;transform:rotate(-90deg)}
+.ring circle{fill:none;stroke-width:2.5}.ring .t{stroke:var(--border)}.ring .p{stroke:var(--accent);stroke-dasharray:62.8;stroke-dashoffset:33.9;stroke-linecap:round}
+.ib .stop{position:absolute;width:.5rem;height:.5rem;border-radius:1px;background:var(--ink)}
+.msg{font-size:.875rem;color:var(--muted);margin-top:.6rem;max-width:30rem}.msg b{color:var(--ink);font-weight:650}
+.msg a{color:var(--accent);font-weight:650;text-underline-offset:.15em}
+.tip{font-size:.8125rem;color:var(--muted)}
+.states{display:grid;grid-template-columns:repeat(auto-fill,minmax(14.5rem,1fr));gap:1rem}
+.st{border:1px dashed var(--control);border-radius:.6rem;padding:1rem;display:flex;flex-direction:column;gap:.6rem}
+.st .row{display:flex;align-items:center;gap:.5rem}
+.st .go{min-height:2.5rem;padding:0 1rem;font-size:.875rem}
+.menu{border:1px solid var(--border);border-radius:.6rem;background:var(--bg);box-shadow:0 12px 28px -12px #0005;padding:.35rem;font-size:.9375rem;width:15rem}
+.menu p{padding:.5rem .75rem;color:var(--muted);font-size:.875rem;border-bottom:1px solid var(--border);margin-bottom:.25rem}
+.menu p b{color:var(--ink);font-weight:650}
+.menu a{display:block;padding:.6rem .75rem;border-radius:.4rem;text-decoration:none;color:var(--ink)}.menu a:hover{background:var(--surface)}
+
+/* Library */
+.lib-h{display:flex;justify-content:space-between;align-items:baseline;gap:1rem}
+.lib-h h3{font:600 clamp(2rem,4vw,2.75rem)/1.1 Literata,serif;color:var(--ink)}
+.cnt{font-size:.875rem;color:var(--muted);font-variant-numeric:tabular-nums}
+.tabs{display:flex;gap:1.75rem;border-bottom:1px solid var(--border);margin:1rem 0 1.25rem;overflow-x:auto;scrollbar-width:none}
+.tabs a{flex:none;text-decoration:none;color:var(--muted);font-weight:650;padding:.6rem 0}
+.tabs a[aria-selected=true]{color:var(--ink);box-shadow:inset 0 -2px var(--accent)}
+.note{font-size:.875rem;color:var(--muted);margin-bottom:1.5rem;display:flex;flex-wrap:wrap;gap:.25rem .75rem;align-items:baseline}
+.note a{color:var(--accent);font-weight:650;text-underline-offset:.15em}
+.off{display:flex;gap:.6rem;align-items:flex-start;font-size:.9375rem;color:var(--text);margin-bottom:1.5rem;max-width:44rem}
+.off svg{width:1.125rem;height:1.125rem;margin-top:.15rem;color:var(--muted)}
+.off b{color:var(--ink);font-weight:650}
+.off a{color:var(--accent);font-weight:650;text-underline-offset:.15em;white-space:nowrap}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(8.5rem,1fr));gap:2rem 1.5rem}
+.tile{display:flex;flex-direction:column;gap:.15rem;min-width:0}
+.tile .cvl{position:relative;display:block;margin-bottom:.5rem;text-decoration:none}
+.cv{display:block;width:100%;aspect-ratio:2/3;object-fit:cover;border-radius:.125rem;background:var(--surface);box-shadow:var(--shadow-tile)}
+.tt{font:600 1rem/1.25 Literata,serif;color:var(--ink);text-decoration:none;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.au{font-size:.875rem;color:var(--muted)}
+.pr{font-size:.8125rem;font-weight:650;color:var(--accent);font-variant-numeric:tabular-nums}.pr.fin{color:var(--text);font-weight:400}
+.sz{font-size:.8125rem;color:var(--muted);font-variant-numeric:tabular-nums}
+.here{position:absolute;top:.35rem;right:.35rem;display:grid;place-items:center;width:1.75rem;height:1.75rem;border-radius:50%;background:var(--bg);color:var(--ink);box-shadow:var(--shadow-tile)}
+.here svg{width:1rem;height:1rem;stroke-width:2.5}
+/* Offline, not on this device: the cover steps back, the words stay readable and say why. */
+.away .cv,.away .bind{opacity:var(--dim);filter:grayscale(1)}
+.away .tt{color:var(--muted)}
+.need{display:inline-flex;align-items:center;gap:.35rem;font-size:.8125rem;color:var(--muted)}
+.need svg{width:.875rem;height:.875rem}
+.ok{display:inline-flex;align-items:center;gap:.35rem;font-size:.8125rem;color:var(--ink)}
+.ok svg{width:.875rem;height:.875rem;stroke-width:2.5}
+.empty{max-width:32rem;padding:1rem 0 .5rem}
+.empty .lead{font:400 1.25rem/1.4 Literata,serif;color:var(--ink);margin-bottom:.35rem}
+.empty p{color:var(--muted)}
+
+/* Search */
+.s-h{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:baseline;gap:.25rem 1.5rem;padding-bottom:.875rem;border-bottom:1px solid var(--border);margin-bottom:1rem}
+.s-h h3{font:600 clamp(1.75rem,3vw,2.25rem)/1.15 Literata,serif;color:var(--ink)}
+.res{max-width:55rem}
+.res li{border-bottom:1px solid var(--border)}
+.res a{display:flex;align-items:center;gap:1.125rem;padding:.75rem 0;text-decoration:none}
+.res .c{flex:none;width:3.75rem}
+.res .tx{flex:1;min-width:0;display:flex;flex-wrap:wrap;justify-content:space-between;align-items:baseline;gap:.25rem 1.5rem}
+.res .m{flex:1 1 15rem;display:flex;flex-direction:column;min-width:0}
+.res .t{font:600 1.125rem/1.25 Literata,serif;color:var(--ink)}
+.res .a{font-size:.875rem;color:var(--muted)}
+.res .r{font-size:.875rem;color:var(--accent)}
+.res .away .t{color:var(--muted)}.res .away .r{color:var(--muted)}
+.res .side{display:flex;flex-direction:column;align-items:flex-end;gap:.15rem}
+
+/* Typeset binding: the stand-in when a cover isn't available */
+.bind{container-type:inline-size;position:relative;display:flex;flex-direction:column;justify-content:center;width:100%;aspect-ratio:2/3;border-radius:.125rem;background:var(--surface);box-shadow:var(--shadow-tile);padding:14% 12%;overflow:hidden;color:var(--ink)}
+.bind::before{content:"";position:absolute;inset:5.5cqi;border:1px solid color-mix(in oklch,var(--ink) 16%,transparent);border-radius:1px;pointer-events:none}
+.bind .bt{font:600 clamp(.7rem,13cqi,2rem)/1.12 Literata,serif;text-wrap:balance;overflow-wrap:anywhere;display:-webkit-box;-webkit-line-clamp:5;-webkit-box-orient:vertical;overflow:hidden}
+.bind .br{display:block;width:22cqi;height:1px;background:color-mix(in oklch,var(--ink) 35%,transparent);margin:8cqi 0 7cqi}
+.bind .ba{font:500 clamp(.6rem,8.5cqi,1.15rem)/1.25 'Atkinson Hyperlegible Next',sans-serif;color:var(--muted)}
+.bind .bi{display:none;font:600 52cqi/1 Literata,serif;text-align:center}
+@container (max-width:5.5rem){.bind .bt,.bind .br,.bind .ba{display:none}.bind .bi{display:block}}
+.bind-row{display:flex;flex-wrap:wrap;gap:2rem;align-items:flex-end}
+.bind-row figure{display:flex;flex-direction:column;gap:.6rem}
+.bind-row figcaption{font-size:.8125rem;color:var(--muted)}
+
+@media (max-width:48rem){
+ .bk-top{grid-template-columns:1fr}.bk-top>.cvw{max-width:10rem}
+ .grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:1.75rem 1rem}
+ .acts .go{flex:1 1 100%;justify-content:center;margin:0 0 .25rem}
+ .res .side{align-items:flex-start}
+}
+</style>
+</head><body>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+ <symbol id="dl" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9.5"/><path d="M12 7.5v8.5m-3.75-3.75L12 16l3.75-3.75"/></symbol>
+ <symbol id="chk" viewBox="0 0 24 24"><path d="m5 12.5 4.5 4.5L19 7.5"/></symbol>
+ <symbol id="off" viewBox="0 0 24 24"><path d="m2 2 20 20"/><path d="M5.78 5.78A7 7 0 0 0 9 19h8.5a4.5 4.5 0 0 0 1.31-.2"/><path d="M21.53 16.05A4.5 4.5 0 0 0 17.5 10h-1.79A7 7 0 0 0 9.4 5.05"/></symbol>
+ <symbol id="more" viewBox="0 0 24 24"><circle cx="5" cy="12" r="1"/><circle cx="12" cy="12" r="1"/><circle cx="19" cy="12" r="1"/></symbol>
+ <symbol id="arr" viewBox="0 0 24 24"><path d="M5 12h14m-6-6 6 6-6 6"/></symbol>
+ <symbol id="srch" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></symbol>
+</svg>
+<div class="wrap">
+
+<div class="sheet-top"><h1>Offline mode</h1><span class="themes">Theme <a href="#light" onclick="document.documentElement.dataset.theme='light'">light</a><a href="#dark" onclick="document.documentElement.dataset.theme='dark'">dark</a></span>
+<p>Design pass for review, 28 Nov 2026. Five pieces: a quieter Download button, a Downloaded tab, the offline library and search, and a stand-in for missing covers. Dashed boxes are review notes, not part of the app. Books and covers from Standard Ebooks.</p></div>
+
+<!-- 1. Download button -->
+<section class="part" aria-labelledby="p1"><h2 id="p1">1. Book page: a quieter Download</h2>
+<p class="why">Like Spotify and Apple Music, downloading becomes one round icon beside Continue reading, not a second labelled button. <b>Continue reading stays the only strong action.</b> The size moves into Details, and the icon's name is spoken and shown on hover.</p>
+<div class="frame">
+<header class="hd"><a class="wm" href="#" aria-label="Longshelf, home"><svg viewBox="0 0 256 256" aria-hidden="true"><path class="sh" d="M16 16H64V192H240V240H16Z"/><path class="bk" d="M117.27 176.00L186.82 157.37L149.55 18.27L80.00 36.91Z"/></svg>Longshelf</a><nav class="nav" aria-label="Main"><a href="#">Home</a><a href="#" aria-current="page">Library</a></nav><span class="srch"><svg class="i"><use href="#srch"/></svg>Search your library</span></header>
+<div class="bk-top">
+ <div class="cvw"><img class="cv" src="se-covers/george-eliot_middlemarch.jpg" alt=""></div>
+ <div>
+  <p class="crumb">Library / George Eliot</p>
+  <h3 class="bk-t">Middlemarch</h3>
+  <p class="bk-by">by <a href="#">George Eliot</a></p>
+  <p class="bk-meta">English · EPUB</p>
+  <dl class="tbl"><dt>Progress</dt><dd><span class="pct">42%</span>Book IV, chapter 38<div class="bar"><i style="width:42%"></i></div></dd><dt>Last read</dt><dd>Yesterday, on this device</dd></dl>
+  <div class="acts">
+   <a class="go" href="#">Continue reading <svg class="i"><use href="#arr"/></svg></a>
+   <button class="ib" aria-label="Download Middlemarch, 1.4 MB" title="Download · 1.4 MB"><svg class="i"><use href="#dl"/></svg></button>
+   <button class="ib" aria-label="More"><svg class="i"><use href="#more"/></svg></button>
+  </div>
+ </div>
+</div>
+<dl class="tbl" style="margin-top:2.5rem;max-width:24rem"><dt>File</dt><dd>EPUB · 1.4 MB</dd><dt>Added</dt><dd>14 November 2026</dd></dl>
+</div>
+
+<h3 class="why" style="margin:2rem 0 .75rem;color:var(--ink);font-weight:650">Every state of the icon</h3>
+<div class="states">
+ <div class="st"><span class="lab">Not downloaded</span><div class="row"><span class="go">Continue reading</span><button class="ib" aria-label="Download Middlemarch, 1.4 MB" title="Download · 1.4 MB"><svg class="i"><use href="#dl"/></svg></button></div><p class="tip">Outline arrow, in the text colour. One tap starts it.</p></div>
+ <div class="st"><span class="lab">Downloading</span><div class="row"><span class="go">Continue reading</span><button class="ib" role="progressbar" aria-valuenow="46" aria-valuemin="0" aria-valuemax="100" aria-label="Downloading Middlemarch, 46%. Tap to stop" title="Downloading · 46% · tap to stop"><svg class="ring" viewBox="0 0 24 24" aria-hidden="true"><circle class="t" cx="12" cy="12" r="10"/><circle class="p" cx="12" cy="12" r="10"/></svg><span class="stop"></span></button></div><p class="tip">A ring fills in oxblood (the current state). The square stops it, and nothing half-saved is kept.</p></div>
+ <div class="st"><span class="lab">On this device</span><div class="row"><span class="go">Continue reading</span><button class="ib" aria-label="On this device. Options" title="On this device · 1.4 MB"><span class="done"><svg class="i"><use href="#chk"/></svg></span></button></div><p class="tip">A filled ink circle with a tick. Tapping opens the small menu below; nothing is removed by one tap.</p></div>
+ <div class="st"><span class="lab">Tapped when downloaded</span><div class="menu" role="menu"><p><b>On this device</b> · 1.4 MB<br>Opens with no connection.</p><a href="#" role="menuitem">Remove from this device</a><a href="#" role="menuitem">All downloads</a></div></div>
+ <div class="st"><span class="lab">Newer copy in your library</span><div class="row"><span class="go">Continue reading</span><button class="ib" aria-label="On this device. A newer copy is ready. Options" title="Newer copy ready"><span class="done"><svg class="i"><use href="#chk"/></svg></span><span class="newer"></span></button></div><p class="tip">A small oxblood dot: a way onward. The menu offers Update · 1.5 MB first. The old copy opens until then.</p></div>
+ <div class="st"><span class="lab">Offline, not downloaded</span><div class="row"><span class="go">Continue reading</span><button class="ib" aria-disabled="true" aria-label="Download when you're online" title="Download when you're online"><svg class="i"><use href="#off"/></svg></button></div><p class="tip">The cloud-off mark from the header, greyed. The reader already says it can't open yet.</p></div>
+ <div class="st"><span class="lab">Not enough space</span><div class="row"><span class="go">Continue reading</span><button class="ib" aria-label="Download Middlemarch, 9.1 MB"><svg class="i"><use href="#dl"/></svg></button></div><p class="msg" role="status"><b>Not enough space.</b> It needs 9.1 MB and about 3 MB is free. <a href="#">Free some space</a></p></div>
+ <div class="st"><span class="lab">Download stopped</span><div class="row"><span class="go">Continue reading</span><button class="ib" aria-label="Try the download again, 1.4 MB"><svg class="i"><use href="#dl"/></svg></button></div><p class="msg" role="status">The connection dropped, so nothing was saved. Tap the arrow to try again.</p></div>
+</div>
+</section>
+
+<!-- 2. Downloaded tab -->
+<section class="part" aria-labelledby="p2"><h2 id="p2">2. Library: a Downloaded tab</h2>
+<p class="why">Like Apple Music's Downloaded section: every book on this device in one place. <b>It sits second, after Recently added, and never moves</b>, online or off. No tick marks here, since everything on this tab is downloaded; each book shows its size instead.</p>
+<div class="frame">
+<div class="lib-h"><h3>Library</h3><span class="cnt">96 books</span></div>
+<nav class="tabs" role="tablist"><a href="#" role="tab">Recently added</a><a href="#" role="tab" aria-selected="true">Downloaded</a><a href="#" role="tab">Authors</a><a href="#" role="tab">Genres</a><a href="#" role="tab">Collections</a><a href="#" role="tab">News &amp; magazines</a><a href="#" role="tab">All Books</a></nav>
+<p class="note"><span>4 books · 5.2 MB on this device. Most recently read first.</span><a href="#">Manage storage</a></p>
+<ol class="grid">
+ <li class="tile"><a class="cvl" href="#"><img class="cv" src="se-covers/george-eliot_middlemarch.jpg" alt=""></a><a class="tt" href="#">Middlemarch</a><span class="au">George Eliot</span><span class="pr">42% read</span><span class="sz">1.4 MB</span></li>
+ <li class="tile"><a class="cvl" href="#"><img class="cv" src="se-covers/bram-stoker_dracula.jpg" alt=""></a><a class="tt" href="#">Dracula</a><span class="au">Bram Stoker</span><span class="pr">71% read</span><span class="sz">1.1 MB</span></li>
+ <li class="tile"><a class="cvl" href="#"><span class="bind"><span class="bt">Wuthering Heights</span><span class="br"></span><span class="ba">Emily Brontë</span><span class="bi">W</span></span></a><a class="tt" href="#">Wuthering Heights</a><span class="au">Emily Brontë</span><span class="sz">0.9 MB</span></li>
+ <li class="tile"><a class="cvl" href="#"><img class="cv" src="se-covers/jane-austen_persuasion.jpg" alt=""></a><a class="tt" href="#">Persuasion</a><span class="au">Jane Austen</span><span class="pr fin">Finished</span><span class="sz">0.6 MB</span></li>
+</ol>
+</div>
+<div class="frame" style="margin-top:1rem"><span class="lab">The same tab with nothing downloaded</span>
+<div class="empty"><p class="lead">Nothing on this device yet.</p><p>Tap the arrow on a book's page and it'll be here, ready to read with no connection.</p></div></div>
+</section>
+
+<!-- 3. Offline library -->
+<section class="part" aria-labelledby="p3"><h2 id="p3">3. Library, offline</h2>
+<p class="why">Books that can't open stay where they are, so nothing seems to vanish. <b>Their covers step back and a line says why</b>; the words keep full contrast. Colour is never the only sign (web.dev's offline guidance). They still open their book page.</p>
+<div class="frame">
+<header class="hd"><a class="wm" href="#" aria-label="Longshelf, home"><svg viewBox="0 0 256 256" aria-hidden="true"><path class="sh" d="M16 16H64V192H240V240H16Z"/><path class="bk" d="M117.27 176.00L186.82 157.37L149.55 18.27L80.00 36.91Z"/></svg>Longshelf</a><nav class="nav" aria-label="Main"><a href="#">Home</a><a href="#" aria-current="page">Library</a></nav><span class="srch"><svg class="i"><use href="#srch"/></svg>Search your library</span><span class="sync"><svg class="i"><use href="#off"/></svg>Offline</span></header>
+<div class="lib-h"><h3>Library</h3><span class="cnt">96 books</span></div>
+<nav class="tabs" role="tablist"><a href="#" role="tab">Recently added</a><a href="#" role="tab">Downloaded</a><a href="#" role="tab">Authors</a><a href="#" role="tab">Genres</a><a href="#" role="tab">Collections</a><a href="#" role="tab">News &amp; magazines</a><a href="#" role="tab" aria-selected="true">All Books</a></nav>
+<p class="off" role="status"><svg class="i"><use href="#off"/></svg><span><b>Offline.</b> 4 books are on this device and open now. <a href="#">See downloaded books</a></span></p>
+<ol class="grid">
+ <li class="tile"><a class="cvl" href="#"><img class="cv" src="se-covers/leo-tolstoy_anna-karenina_constance-garnett.jpg" alt=""></a><a class="tt" href="#">Anna Karenina</a><span class="au">Leo Tolstoy</span><span class="ok"><svg class="i"><use href="#chk"/></svg>On this device</span></li>
+ <li class="tile away"><a class="cvl" href="#"><img class="cv" src="se-covers/charles-dickens_a-christmas-carol.jpg" alt=""></a><a class="tt" href="#">A Christmas Carol</a><span class="au">Charles Dickens</span><span class="need"><svg class="i"><use href="#off"/></svg>Needs a connection</span></li>
+ <li class="tile"><a class="cvl" href="#"><img class="cv" src="se-covers/bram-stoker_dracula.jpg" alt=""></a><a class="tt" href="#">Dracula</a><span class="au">Bram Stoker</span><span class="pr">71% read</span><span class="ok"><svg class="i"><use href="#chk"/></svg>On this device</span></li>
+ <li class="tile away"><a class="cvl" href="#"><img class="cv" src="se-covers/jane-austen_emma.jpg" alt=""></a><a class="tt" href="#">Emma</a><span class="au">Jane Austen</span><span class="need"><svg class="i"><use href="#off"/></svg>Needs a connection</span></li>
+ <li class="tile away"><a class="cvl" href="#"><span class="bind"><span class="bt">Great Expectations</span><span class="br"></span><span class="ba">Charles Dickens</span><span class="bi">G</span></span></a><a class="tt" href="#">Great Expectations</a><span class="au">Charles Dickens</span><span class="need"><svg class="i"><use href="#off"/></svg>Needs a connection</span></li>
+ <li class="tile away"><a class="cvl" href="#"><img class="cv" src="se-covers/mary-shelley_frankenstein.jpg" alt=""></a><a class="tt" href="#">Frankenstein</a><span class="au">Mary Shelley</span><span class="pr fin">Finished</span><span class="need"><svg class="i"><use href="#off"/></svg>Needs a connection</span></li>
+</ol>
+</div>
+<p class="why" style="margin-top:1rem">Online, the shelves look as they do today: the ✓ on the cover stays, and none of these lines show.</p>
+</section>
+
+<!-- 4. Search offline -->
+<section class="part" aria-labelledby="p4"><h2 id="p4">4. Search, offline</h2>
+<p class="why">Search already runs on the device, so it keeps working. Results keep their order; <b>each row says whether it opens now</b>, and the match reason turns grey on rows that can't.</p>
+<div class="frame">
+<div class="s-h"><h3>Results for “the”</h3><span class="cnt">4 books</span></div>
+<p class="off" role="status"><svg class="i"><use href="#off"/></svg><span><b>Offline.</b> Books on this device open now; the others need a connection.</span></p>
+<ol class="res" aria-label="Search results">
+ <li><a href="#"><span class="c"><img class="cv" src="se-covers/robert-w-chambers_the-king-in-yellow.jpg" alt=""></span><span class="tx"><span class="m"><span class="t">The King in Yellow</span><span class="a">Robert W. Chambers</span></span><span class="side"><span class="r">Title</span><span class="ok"><svg class="i"><use href="#chk"/></svg>On this device</span></span></span></a></li>
+ <li class="away"><a href="#"><span class="c"><img class="cv" src="se-covers/oscar-wilde_the-picture-of-dorian-gray.jpg" alt=""></span><span class="tx"><span class="m"><span class="t">The Picture of Dorian Gray</span><span class="a">Oscar Wilde</span></span><span class="side"><span class="r">Title</span><span class="need"><svg class="i"><use href="#off"/></svg>Needs a connection</span></span></span></a></li>
+ <li class="away"><a href="#"><span class="c"><span class="bind"><span class="bt">To the Lighthouse</span><span class="br"></span><span class="ba">Virginia Woolf</span><span class="bi">T</span></span></span><span class="tx"><span class="m"><span class="t">To the Lighthouse</span><span class="a">Virginia Woolf</span></span><span class="side"><span class="r">Title</span><span class="need"><svg class="i"><use href="#off"/></svg>Needs a connection</span></span></span></a></li>
+ <li class="away"><a href="#"><span class="c"><img class="cv" src="se-covers/charles-dickens_a-tale-of-two-cities.jpg" alt=""></span><span class="tx"><span class="m"><span class="t">A Tale of Two Cities</span><span class="a">Charles Dickens</span></span><span class="side"><span class="r">Title</span><span class="need"><svg class="i"><use href="#off"/></svg>Needs a connection</span></span></span></a></li>
+</ol>
+</div>
+</section>
+
+<!-- 5. Typeset binding -->
+<section class="part" aria-labelledby="p5"><h2 id="p5">5. When there's no cover</h2>
+<p class="why">A plain binding in the page's own greys, like a clothbound book with its title stamped on: title in Literata, a short rule, the author. <b>No colour, so oxblood keeps its one meaning.</b> At small sizes, where words can't be read, it shows the title's first letter (skipping “The”, “A” and “An”). The real cover replaces it as soon as one arrives.</p>
+<div class="frame"><div class="bind-row">
+ <figure style="width:16rem"><span class="bind"><span class="bt">The Count of Monte Cristo</span><span class="br"></span><span class="ba">Alexandre Dumas</span><span class="bi">C</span></span><figcaption>Book page, 16rem</figcaption></figure>
+ <figure style="width:8.5rem"><span class="bind"><span class="bt">Wuthering Heights</span><span class="br"></span><span class="ba">Emily Brontë</span><span class="bi">W</span></span><figcaption>Shelf tile</figcaption></figure>
+ <figure style="width:8.5rem"><span class="bind"><span class="bt">The Strange Case of Dr. Jekyll and Mr. Hyde</span><span class="br"></span><span class="ba">Robert Louis Stevenson</span><span class="bi">S</span></span><figcaption>Long title</figcaption></figure>
+ <figure style="width:3.75rem"><span class="bind"><span class="bt">The Odyssey</span><span class="br"></span><span class="ba">Homer</span><span class="bi">O</span></span><figcaption>Search, ledger</figcaption></figure>
+</div></div>
+</section>
+
+<p class="why" style="padding:3rem 0 4rem">Research behind this pass: web.dev's offline UX guidelines (keep content visible, label what needs a connection, don't rely on grey alone, give an offline library view); Kindle's All / Downloaded split and Apple Music's Downloaded section; Spotify's and Apple Music's single download icon that turns into progress, then a filled “downloaded” mark.</p>
+</div></body></html>

@@ -798,3 +798,9 @@
 - **Measured:** with every request hanging, Home, Library and a book page open in under 7 seconds (before: never).
 - **Test:** `pnpm test:e2e:mirror` gains "the app starts offline and on a weak signal, at any page".
 - **Still open:** the owner finds offline navigation and viewing saved content poor in general. Specifics to gather before any design.
+
+## 2026-11-28: Offline mode design pass (mock for approval)
+
+- **Owner's choices:** a Downloaded tab in the Library (second, fixed place); offline, books not on the device are dimmed and labelled "Needs a connection", in shelves and search; a monochrome typeset binding where a cover isn't available; a quieter, icon-only Download on the book page, like music apps.
+- **Mock:** `design-mocks/offline-mode.html`, made with impeccable, light and dark, phone and desktop. Waiting on the owner's approval; no app code yet.
+- **Research:** web.dev offline UX guidelines; Kindle's All / Downloaded split; Apple Music's Downloaded section; Spotify's and Apple Music's single download icon.
