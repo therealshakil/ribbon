@@ -20,7 +20,7 @@ with the work done in the cloud:
 - **Cost:** $0 a month expected; no new npm dependencies.
 
 Decisions are in [research.md](research.md) R1 to R10.
-[DR-0013](../../docs/decisions/DR-0013-author-lookups-in-the-mirror.md) (proposed)
+[DR-0013](../../docs/decisions/DR-0013-author-lookups-in-the-mirror.md) (accepted 2026-11-28)
 records the runner and adds Open Library matching and first-published years to DR-0005.
 
 ## Technical Context
@@ -75,7 +75,7 @@ Evergreen browsers. The CLI on Linux and macOS.
 | III. Dual interface | Pass | Operator view: the Settings status, `wrangler tail` on the lookups Worker, and DEPLOY.md's new section. The owner view is the author and book pages. |
 | IV. What, not how | Pass | The spec names no tools. They're named here, in research.md and in DR-0013. |
 | V. Adopt before building | Pass | Cron Triggers and D1 rather than our own scheduler. Queues, Workflows and an adapter fork were assessed (R1). The DR-0005 source route is reused. |
-| VI. Decisions recorded | Pass | DR-0013 (proposed) for the runner and the change to DR-0005. The owner locks it. |
+| VI. Decisions recorded | Pass | DR-0013, accepted by the owner 2026-11-28, records the runner and the change to DR-0005. |
 | VII. Challenger before locking | Pass | DR-0013's challenger argued for first-published years only; the owner rejected that case on 2026-11-28. |
 | VIII. Cite or mark assumption | Pass | Limits are cited with the read date; four ASSUMPTIONs are named (document size, request count, refresh periods, living-author coverage), each with a check. |
 | IX. Economy | Pass | $0 a month expected. A second Worker is free on the Free plan. No new dependencies. |

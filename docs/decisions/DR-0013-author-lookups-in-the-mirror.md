@@ -1,6 +1,6 @@
 # DR-0013: Author lookups run in the mirror, matched through Open Library
 
-Status: **proposed** (drafted 2026-11-28 with the spec 006 plan; the owner locks it).
+Status: **accepted** (owner, 2026-11-28). Drafted the same day with the spec 006 plan.
 Refines: [DR-0005](DR-0005-author-data.md). Spec: [006](../../specs/006-open-library/spec.md).
 
 ## Context
