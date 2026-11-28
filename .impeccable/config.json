@@ -1,0 +1,17 @@
+{
+  "detector": {
+    "ignoreRules": [],
+    "ignoreFiles": [],
+    "ignoreValues": [
+      {
+        "rule": "cramped-padding",
+        "value": "*",
+        "files": [
+          "design-mocks/offline-mode.html"
+        ],
+        "createdAt": "2026-11-28T16:28:14.462Z",
+        "reason": "Claude triage 2026-11-28: dashed review frames and the cover stand-in have visible inset at 390px and 1280px in the captures; review chrome, not app UI"
+      }
+    ]
+  }
+}
