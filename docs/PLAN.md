@@ -12,7 +12,7 @@ exists, its `tasks.md` is the source of truth and the list here is not updated.
 | 003 | [Library mirror](../specs/003-library-mirror/spec.md) (Phase 1 below) | 002 | Done 2026-11-25. Deployed 2026-11-24; the owner's 670 books are online at library.longshelf.app |
 | 004 | Read (Phase 2) | 003 | not started |
 | 005 | Device progress (Phase 3) | 004, spike | not started |
-| 006 | [Richer library data from Open Library](../specs/006-open-library/spec.md) | 003 | Locked 2026-11-27 (Wikipedia and Wikidata content per DR-0005, Open Library matching, runs in the mirror); next `/speckit-plan` |
+| 006 | [Richer library data from Open Library](../specs/006-open-library/spec.md) | 003 | Locked 2026-11-27 (Wikipedia and Wikidata content per DR-0005, Open Library matching, runs in the mirror). Plan drafted 2026-11-28 with DR-0013 proposed; next the owner's review, then `/speckit-tasks` |
 
 ## Spike (manual, on the desktop with the Kobo; record findings here)
 - [ ] Install Kobo Utilities, configure columns, confirm store and restore round-trip a position.
